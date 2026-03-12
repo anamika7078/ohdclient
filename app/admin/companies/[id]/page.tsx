@@ -6,6 +6,7 @@ import AdminLayout from '@/components/AdminLayout';
 import { companyAPI } from '@/lib/apiClient';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Edit, Trash2 } from 'lucide-react';
+import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 interface Company {
@@ -33,9 +34,11 @@ export default function CompanyDetailPage() {
       setLoading(true);
       const res = await companyAPI.getById(companyId);
       setCompany(res.data.company || res.data);
-    } catch (error: any) {
-      console.error('Failed to load company', error);
-      toast.error(error.response?.data?.error || 'Failed to load company');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load company', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load company';
+      toast.error(message);
       router.push('/admin/companies');
     } finally {
       setLoading(false);
@@ -57,9 +60,11 @@ export default function CompanyDetailPage() {
       await companyAPI.delete(companyId);
       toast.success('Company deleted successfully');
       router.push('/admin/companies');
-    } catch (error: any) {
-      console.error('Failed to delete company', error);
-      toast.error(error.response?.data?.error || 'Failed to delete company');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to delete company', err);
+      const message = err.response?.data?.error || err.message || 'Failed to delete company';
+      toast.error(message);
     } finally {
       setDeleting(false);
     }

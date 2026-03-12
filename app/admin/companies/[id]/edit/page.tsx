@@ -6,6 +6,7 @@ import AdminLayout from '@/components/AdminLayout';
 import { companyAPI } from '@/lib/apiClient';
 import Link from 'next/link';
 import { ArrowLeft, Building2, Mail, Briefcase, Users } from 'lucide-react';
+import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 interface Company {
@@ -45,9 +46,11 @@ export default function EditCompanyPage() {
         typeof data.employeeCount === 'number' ? data.employeeCount : data.employeeCount || ''
       );
       setStatus((data.status as 'active' | 'inactive') || 'active');
-    } catch (error: any) {
-      console.error('Failed to load company', error);
-      toast.error(error.response?.data?.error || 'Failed to load company');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load company', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load company';
+      toast.error(message);
       router.push('/admin/companies');
     } finally {
       setLoading(false);
@@ -78,9 +81,11 @@ export default function EditCompanyPage() {
       });
       toast.success('Company updated successfully');
       router.push(`/admin/companies/${companyId}`);
-    } catch (error: any) {
-      console.error('Failed to update company', error);
-      toast.error(error.response?.data?.error || 'Failed to update company');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to update company', err);
+      const message = err.response?.data?.error || err.message || 'Failed to update company';
+      toast.error(message);
     } finally {
       setSaving(false);
     }
