@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, Suspense } from 'react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { companyAPI, questionAPI, responseAPI, sectionAPI } from '@/lib/apiClient';
@@ -42,7 +42,7 @@ const numericToLetterRating = (value: NumericRating): 'A' | 'B' | 'C' | 'D' | 'E
   return map[value];
 };
 
-export default function SurveyPage() {
+function SurveyPageContent() {
   const searchParams = useSearchParams();
   const initialCompanyId = searchParams.get('companyId') || '';
 
@@ -536,6 +536,18 @@ export default function SurveyPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+export default function SurveyPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <SurveyPageContent />
+    </Suspense>
   );
 }
 
