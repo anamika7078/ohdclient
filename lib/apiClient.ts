@@ -11,9 +11,9 @@ export interface PaginationParams {
 // Auth APIs
 export const authAPI = {
   signup: (data: { email: string; password: string }) =>
-    api.post('/auth/signup', data),
+    api.post('/api/auth/signup', data),
   login: (data: { email: string; password: string }) =>
-    api.post('/auth/login', data),
+    api.post('/api/auth/login', data),
   logout: () => api.post('/auth/logout'),
 };
 
