@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import AdminLayout from '@/components\AdminLayout';
+import AdminLayout from '@/components/AdminLayout';
 import { companyAPI, reportAPI } from '@/lib/apiClient';
 import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
