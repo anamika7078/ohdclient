@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '@/lib/apiClient';
+import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 export default function SignupPage() {
@@ -28,11 +30,13 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const response = await authAPI.signup({ email, password });
+      await authAPI.signup({ email, password });
       toast.success('Account created successfully!');
       router.push('/admin');
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Signup failed');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      const message = err.response?.data?.error || err.message || 'Signup failed';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -43,7 +47,7 @@ export default function SignupPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto h-20 w-20 bg-white rounded-2xl flex items-center justify-center shadow-lg mb-4 p-2 ring-1 ring-primary-100">
-            <img src="/ohdlogo.png" alt="OHD Logo" className="w-full h-full object-contain" />
+            <Image src="/ohdlogo.png" alt="OHD Logo" width={80} height={80} className="w-full h-full object-contain" />
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-2">
             Create Account

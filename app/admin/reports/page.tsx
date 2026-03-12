@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import AdminLayout from '@/components/AdminLayout';
+import AdminLayout from '@/components\AdminLayout';
 import { companyAPI, reportAPI } from '@/lib/apiClient';
+import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import {
   BarChart,
@@ -85,9 +86,11 @@ export default function ReportsPage() {
     try {
       const res = await companyAPI.getAll();
       setCompanies(res.data.companies || []);
-    } catch (error: any) {
-      console.error('Failed to load companies', error);
-      toast.error(error.response?.data?.error || 'Failed to load companies');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load companies', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load companies';
+      toast.error(message);
     }
   };
 
@@ -97,9 +100,11 @@ export default function ReportsPage() {
       const res = await reportAPI.getOverallReport(companyId || undefined);
       setOverall(res.data.overallStats || null);
       setSections(res.data.sectionStats || []);
-    } catch (error: any) {
-      console.error('Failed to load report', error);
-      toast.error(error.response?.data?.error || 'Failed to load report');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load report', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load report';
+      toast.error(message);
       setOverall(null);
       setSections([]);
     } finally {

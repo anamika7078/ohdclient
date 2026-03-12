@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { sectionAPI } from '@/lib/apiClient';
+import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 interface Section {
@@ -36,9 +37,11 @@ export default function SectionsPage() {
       setLoading(true);
       const res = await sectionAPI.getAll();
       setSections(res.data.sections || []);
-    } catch (error: any) {
-      console.error('Failed to load sections', error);
-      toast.error(error.response?.data?.error || 'Failed to load sections');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load sections', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load sections';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -69,9 +72,11 @@ export default function SectionsPage() {
       setPillar('');
       setOrder('');
       setSections((prev) => [...prev, res.data.section]);
-    } catch (error: any) {
-      console.error('Failed to create section', error);
-      toast.error(error.response?.data?.error || 'Failed to create section');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to create section', err);
+      const message = err.response?.data?.error || err.message || 'Failed to create section';
+      toast.error(message);
     } finally {
       setCreating(false);
     }

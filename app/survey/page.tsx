@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { companyAPI, questionAPI, responseAPI, sectionAPI } from '@/lib/apiClient';
+import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 type NumericRating = 1 | 2 | 3 | 4 | 5;
@@ -76,9 +77,11 @@ export default function SurveyPage() {
           const companyRes = await companyAPI.getById(initialCompanyId);
           setCompany(companyRes.data.company || companyRes.data);
         }
-      } catch (error: any) {
-        console.error('Failed to load survey data', error);
-        toast.error(error.response?.data?.error || 'Failed to load survey data');
+      } catch (error) {
+        const err = error as AxiosError<{ error?: string }>;
+        console.error('Failed to load survey data', err);
+        const message = err.response?.data?.error || err.message || 'Failed to load survey data';
+        toast.error(message);
       } finally {
         setLoadingMeta(false);
       }
@@ -235,9 +238,11 @@ export default function SurveyPage() {
       setExpired(false);
       setTimeLeft(TOTAL_TIME_SECONDS);
       setAnswers({});
-    } catch (error: any) {
-      console.error('Failed to submit response', error);
-      toast.error(error.response?.data?.error || 'Failed to submit response');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to submit response', err);
+      const message = err.response?.data?.error || err.message || 'Failed to submit response';
+      toast.error(message);
       setSubmitting(false);
     }
   };
