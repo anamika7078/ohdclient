@@ -320,7 +320,7 @@ export default function AdminDashboard() {
                 <XAxis type="number" domain={[0, 100]} />
                 <YAxis dataKey="name" type="category" width={150} />
                 <Tooltip
-                  formatter={(value: number | string | undefined) => [`${value}%`, 'Performance %']}
+                  formatter={(value) => [`${value ?? 0}%`, 'Performance %']}
                 />
 
                 <Legend />
