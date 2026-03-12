@@ -62,7 +62,7 @@ export default function AdminDashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch all data in parallel
       const [reportRes, companiesRes, sectionsRes] = await Promise.all([
         reportAPI.getOverallReport(),
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
 
       const reportData = reportRes.data;
       setOverallStats(reportData.overallStats || null);
-      
+
       // Transform section stats for charts
       if (reportData.sectionStats && Array.isArray(reportData.sectionStats)) {
         const rawStats = reportData.sectionStats as RawSectionStat[];
@@ -100,12 +100,12 @@ export default function AdminDashboard() {
   // Prepare rating distribution data for charts
   const ratingData = overallStats
     ? [
-        { name: 'A (Excellent)', value: overallStats.ratingDistribution.A, percentage: overallStats.ratingDistributionPercentage.A, color: '#10b981' },
-        { name: 'B (Good)', value: overallStats.ratingDistribution.B, percentage: overallStats.ratingDistributionPercentage.B, color: '#3b82f6' },
-        { name: 'C (Average)', value: overallStats.ratingDistribution.C, percentage: overallStats.ratingDistributionPercentage.C, color: '#f59e0b' },
-        { name: 'D (Poor)', value: overallStats.ratingDistribution.D, percentage: overallStats.ratingDistributionPercentage.D, color: '#ef4444' },
-        { name: 'E (Very Poor)', value: overallStats.ratingDistribution.E, percentage: overallStats.ratingDistributionPercentage.E, color: '#dc2626' },
-      ]
+      { name: 'A (Excellent)', value: overallStats.ratingDistribution.A, percentage: overallStats.ratingDistributionPercentage.A, color: '#10b981' },
+      { name: 'B (Good)', value: overallStats.ratingDistribution.B, percentage: overallStats.ratingDistributionPercentage.B, color: '#3b82f6' },
+      { name: 'C (Average)', value: overallStats.ratingDistribution.C, percentage: overallStats.ratingDistributionPercentage.C, color: '#f59e0b' },
+      { name: 'D (Poor)', value: overallStats.ratingDistribution.D, percentage: overallStats.ratingDistributionPercentage.D, color: '#ef4444' },
+      { name: 'E (Very Poor)', value: overallStats.ratingDistribution.E, percentage: overallStats.ratingDistributionPercentage.E, color: '#dc2626' },
+    ]
     : [];
 
   // Prepare section performance data (top 10 sections)
@@ -178,15 +178,14 @@ export default function AdminDashboard() {
             <div className="mt-4">
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className={`h-2 rounded-full transition-all ${
-                    overallStats && overallStats.overallPercentage >= 80
+                  className={`h-2 rounded-full transition-all ${overallStats && overallStats.overallPercentage >= 80
                       ? 'bg-emerald-500'
                       : overallStats && overallStats.overallPercentage >= 60
-                      ? 'bg-blue-500'
-                      : overallStats && overallStats.overallPercentage >= 40
-                      ? 'bg-yellow-500'
-                      : 'bg-red-500'
-                  }`}
+                        ? 'bg-blue-500'
+                        : overallStats && overallStats.overallPercentage >= 40
+                          ? 'bg-yellow-500'
+                          : 'bg-red-500'
+                    }`}
                   style={{
                     width: overallStats && typeof overallStats.overallPercentage === 'number'
                       ? `${overallStats.overallPercentage}%`
@@ -320,6 +319,7 @@ export default function AdminDashboard() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" domain={[0, 100]} />
                 <YAxis dataKey="name" type="category" width={150} />
+                <Tooltip />
                 <Legend />
                 <Bar dataKey="percentage" fill="#8b5cf6" name="Performance %" />
               </BarChart>
