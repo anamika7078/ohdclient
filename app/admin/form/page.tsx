@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { companyAPI, sectionAPI, questionAPI, responseAPI } from '@/lib/apiClient';
 import toast from 'react-hot-toast';
+import type { AxiosError } from 'axios';
 
 interface Company {
   _id: string;
@@ -33,6 +34,10 @@ export default function FillFormPage() {
   const [answers, setAnswers] = useState<Record<string, Rating | ''>>({});
   const [submitting, setSubmitting] = useState(false);
 
+  const isAnsweredEntry = (entry: [string, Rating | '']): entry is [string, Rating] => {
+    return entry[1] !== '';
+  };
+
   const fetchMeta = async () => {
     try {
       const [companyRes, sectionRes, questionRes] = await Promise.all([
@@ -43,9 +48,11 @@ export default function FillFormPage() {
       setCompanies(companyRes.data.companies || []);
       setSections(sectionRes.data.sections || []);
       setQuestions(questionRes.data.questions || []);
-    } catch (error: any) {
-      console.error('Failed to load form data', error);
-      toast.error(error.response?.data?.error || 'Failed to load form data');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load form data', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load form data';
+      toast.error(message);
     }
   };
 
@@ -78,7 +85,7 @@ export default function FillFormPage() {
     }
 
     const filledAnswers = Object.entries(answers)
-      .filter(([_, rating]) => rating)
+      .filter(isAnsweredEntry)
       .map(([questionId, rating]) => ({
         questionId,
         rating,
@@ -97,9 +104,11 @@ export default function FillFormPage() {
       });
       toast.success('Response submitted');
       setAnswers({});
-    } catch (error: any) {
-      console.error('Failed to submit response', error);
-      toast.error(error.response?.data?.error || 'Failed to submit response');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to submit response', err);
+      const message = err.response?.data?.error || 'Failed to submit response';
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }

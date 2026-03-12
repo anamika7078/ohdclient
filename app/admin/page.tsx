@@ -19,6 +19,7 @@ import {
   LineChart,
   Line,
 } from 'recharts';
+import type { PieLabelRenderProps } from 'recharts';
 
 interface OverallStats {
   overallPercentage: number;
@@ -257,7 +258,9 @@ export default function AdminDashboard() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
+                    label={(props: PieLabelRenderProps & { percentage?: number }) =>
+                      `${props.name}: ${props.percentage?.toFixed(1) ?? '0.0'}%`
+                    }
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
@@ -308,7 +311,9 @@ export default function AdminDashboard() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" domain={[0, 100]} />
                 <YAxis dataKey="name" type="category" width={150} />
-                <Tooltip formatter={(value: number) => `${value}%`} />
+                <Tooltip
+                  formatter={(value: number | string) => `${value}%`}
+                />
                 <Legend />
                 <Bar dataKey="percentage" fill="#8b5cf6" name="Performance %" />
               </BarChart>
