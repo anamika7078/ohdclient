@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { authAPI } from '@/lib/apiClient';
+import { clearStoredAuthToken } from '@/lib/api';
 import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
@@ -54,6 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const handleLogout = async () => {
     try {
       await authAPI.logout();
+      clearStoredAuthToken();
       toast.success('Logged out successfully');
       router.push('/admin/login');
     } catch (error) {

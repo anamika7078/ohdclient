@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { authAPI } from '@/lib/apiClient';
+import { setStoredAuthToken } from '@/lib/api';
 import toast from 'react-hot-toast';
 import type { AxiosError } from 'axios';
 
@@ -20,7 +21,11 @@ export default function LoginPage() {
     try {
       console.log('Attempting login with:', { email });
       const response = await authAPI.login({ email, password });
+      const token = response.data?.token as string | undefined;
       console.log('Login response:', response.data);
+      if (token) {
+        setStoredAuthToken(token);
+      }
       toast.success('Login successful!');
       router.push('/admin');
     } catch (error) {

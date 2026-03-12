@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '@/lib/apiClient';
+import { setStoredAuthToken } from '@/lib/api';
 import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
@@ -30,7 +31,11 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      await authAPI.signup({ email, password });
+      const response = await authAPI.signup({ email, password });
+      const token = response.data?.token as string | undefined;
+      if (token) {
+        setStoredAuthToken(token);
+      }
       toast.success('Account created successfully!');
       router.push('/admin');
     } catch (error) {
