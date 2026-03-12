@@ -320,8 +320,12 @@ export default function AdminDashboard() {
                 <XAxis type="number" domain={[0, 100]} />
                 <YAxis dataKey="name" type="category" width={150} />
                 <Tooltip
-                  formatter={(value: string | number | undefined, name: string | number | undefined) => [`${value ?? 0}%`, String(name ?? '')]}
+                  formatter={(value: string | number | undefined, name: string | number | undefined) => [
+                    `${value ?? 0}%`,
+                    String(name ?? '')
+                  ]}
                 />
+
                 <Legend />
                 <Bar dataKey="percentage" fill="#8b5cf6" name="Performance %" />
               </BarChart>
