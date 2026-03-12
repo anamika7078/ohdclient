@@ -53,33 +53,12 @@ interface SectionStat {
 }
 
 const PIE_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#f97316', '#ef4444'];
-const RATING_LABELS: Record<string, string> = {
-  A: 'Strongly Agree (5)',
-  B: 'Agree (4)',
-  C: 'Neutral (3)',
-  D: 'Disagree (2)',
-  E: 'Strongly Disagree (1)'
-};
-
-const getTopAnswer = (ratingCount: { A: number; B: number; C: number; D: number; E: number }) => {
-  let top = 'none';
-  let max = -1;
-  Object.entries(ratingCount).forEach(([key, value]) => {
-    if (value > max) {
-      max = value;
-      top = key;
-    }
-  });
-  if (max === 0) return { label: 'No Responses', count: 0 };
-  return { label: RATING_LABELS[top], count: max };
-};
 
 export default function ReportsPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [overall, setOverall] = useState<OverallReport | null>(null);
   const [sections, setSections] = useState<SectionStat[]>([]);
-  const [loading, setLoading] = useState(false);
   const [selectedPillar, setSelectedPillar] = useState<string>('1');
 
   const fetchCompanies = async () => {
@@ -96,7 +75,6 @@ export default function ReportsPage() {
 
   const fetchOverall = async (companyId?: string) => {
     try {
-      setLoading(true);
       const res = await reportAPI.getOverallReport(companyId || undefined);
       setOverall(res.data.overallStats || null);
       setSections(res.data.sectionStats || []);
@@ -107,8 +85,6 @@ export default function ReportsPage() {
       toast.error(message);
       setOverall(null);
       setSections([]);
-    } finally {
-      setLoading(false);
     }
   };
 

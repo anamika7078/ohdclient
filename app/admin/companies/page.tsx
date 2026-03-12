@@ -6,6 +6,7 @@ import { companyAPI } from '@/lib/apiClient';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { Mail, Edit, Eye, Trash2, Plus } from 'lucide-react';
+import type { AxiosError } from 'axios';
 
 interface Company {
   _id: string;
@@ -26,9 +27,11 @@ export default function CompaniesPage() {
       setLoading(true);
       const res = await companyAPI.getAll();
       setCompanies(res.data.companies || []);
-    } catch (error: any) {
-      console.error('Failed to load companies', error);
-      toast.error(error.response?.data?.error || 'Failed to load companies');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load companies', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load companies';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -44,8 +47,10 @@ export default function CompaniesPage() {
       await companyAPI.delete(id);
       setCompanies((prev) => prev.filter((c) => c._id !== id));
       toast.success('Company deleted successfully');
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to delete company');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      const message = err.response?.data?.error || err.message || 'Failed to delete company';
+      toast.error(message);
     }
   };
 

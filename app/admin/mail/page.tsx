@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import { companyAPI, mailAPI } from '@/lib/apiClient';
 import toast from 'react-hot-toast';
+import type { AxiosError } from 'axios';
 
 interface MailLog {
   _id: string;
@@ -38,9 +39,11 @@ export default function MailPage() {
       setLoadingLogs(true);
       const res = await mailAPI.getLogs();
       setLogs(res.data.logs || []);
-    } catch (error: any) {
-      console.error('Failed to load mail logs', error);
-      toast.error(error.response?.data?.error || 'Failed to load mail logs');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load mail logs', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load mail logs';
+      toast.error(message);
     } finally {
       setLoadingLogs(false);
     }
@@ -55,9 +58,11 @@ export default function MailPage() {
         if (companyIdFromQuery) {
           setSelectedCompany(companyIdFromQuery);
         }
-      } catch (error: any) {
-        console.error('Failed to load companies', error);
-        toast.error(error.response?.data?.error || 'Failed to load companies');
+      } catch (error) {
+        const err = error as AxiosError<{ error?: string }>;
+        console.error('Failed to load companies', err);
+        const message = err.response?.data?.error || err.message || 'Failed to load companies';
+        toast.error(message);
       }
       fetchLogs();
     };
@@ -109,9 +114,11 @@ export default function MailPage() {
       setSelectedCompany('');
       setSurveyLinkPreview('');
       fetchLogs();
-    } catch (error: any) {
-      console.error('Failed to send bulk mail', error);
-      toast.error(error.response?.data?.error || 'Failed to send bulk mail');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to send bulk mail', err);
+      const message = err.response?.data?.error || err.message || 'Failed to send bulk mail';
+      toast.error(message);
     } finally {
       setSending(false);
     }

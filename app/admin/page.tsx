@@ -16,10 +16,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  LineChart,
-  Line,
 } from 'recharts';
 import type { PieLabelRenderProps } from 'recharts';
+import type { AxiosError } from 'axios';
 
 interface OverallStats {
   overallPercentage: number;
@@ -40,6 +39,13 @@ interface SectionStat {
   sectionName: string;
   sectionPercentage: number;
   totalResponses: number;
+}
+
+interface RawSectionStat {
+  sectionId: string;
+  sectionName?: string;
+  sectionPercentage?: number;
+  totalResponses?: number;
 }
 
 export default function AdminDashboard() {
@@ -69,20 +75,23 @@ export default function AdminDashboard() {
       
       // Transform section stats for charts
       if (reportData.sectionStats && Array.isArray(reportData.sectionStats)) {
-        const transformed = reportData.sectionStats.map((stat: any) => ({
+        const rawStats = reportData.sectionStats as RawSectionStat[];
+        const transformed = rawStats.map((stat) => ({
           sectionId: stat.sectionId,
           sectionName: stat.sectionName || 'Unknown',
-          sectionPercentage: stat.sectionPercentage || 0,
-          totalResponses: stat.totalResponses || 0,
+          sectionPercentage: stat.sectionPercentage ?? 0,
+          totalResponses: stat.totalResponses ?? 0,
         }));
         setSectionStats(transformed);
       }
 
       setCompaniesCount(companiesRes.data.companies?.length || 0);
       setSectionsCount(sectionsRes.data.sections?.length || 0);
-    } catch (error: any) {
-      console.error('Failed to load dashboard data', error);
-      toast.error(error.response?.data?.error || 'Failed to load dashboard data');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load dashboard data', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load dashboard data';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

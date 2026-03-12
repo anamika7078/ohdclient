@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { authAPI } from '@/lib/apiClient';
 import toast from 'react-hot-toast';
+import type { AxiosError } from 'axios';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -21,12 +23,14 @@ export default function LoginPage() {
       console.log('Login response:', response.data);
       toast.success('Login successful!');
       router.push('/admin');
-    } catch (error: any) {
-      console.error('Login error:', error);
-      if (error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Login error:', err);
+      if (err.code === 'ERR_NETWORK' || err.message?.includes('Network Error')) {
         toast.error('Cannot connect to server. Make sure the backend is running on port 3000.');
       } else {
-        toast.error(error.response?.data?.error || error.message || 'Login failed');
+        const message = err.response?.data?.error || err.message || 'Login failed';
+        toast.error(message);
       }
     } finally {
       setLoading(false);
@@ -38,7 +42,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto h-20 w-20 bg-white rounded-2xl flex items-center justify-center shadow-lg mb-4 p-2 ring-1 ring-primary-100">
-            <img src="/ohdlogo.png" alt="OHD Logo" className="w-full h-full object-contain" />
+            <Image src="/ohdlogo.png" alt="OHD Logo" width={80} height={80} className="w-full h-full object-contain" />
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-2">
             OHD Admin
@@ -107,7 +111,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-sm text-gray-600">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <a href="/admin/signup" className="font-medium text-primary-600 hover:text-primary-500">
             Create one
           </a>

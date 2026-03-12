@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { questionAPI, sectionAPI } from '@/lib/apiClient';
 import toast from 'react-hot-toast';
+import type { AxiosError } from 'axios';
 
 interface Section {
   _id: string;
@@ -32,9 +33,11 @@ export default function QuestionsPage() {
       setLoading(true);
       const res = await questionAPI.getAll();
       setQuestions(res.data.questions || []);
-    } catch (error: any) {
-      console.error('Failed to load questions', error);
-      toast.error(error.response?.data?.error || 'Failed to load questions');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load questions', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load questions';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -44,9 +47,11 @@ export default function QuestionsPage() {
     try {
       const res = await sectionAPI.getAll();
       setSections(res.data.sections || []);
-    } catch (error: any) {
-      console.error('Failed to load sections', error);
-      toast.error(error.response?.data?.error || 'Failed to load sections');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to load sections', err);
+      const message = err.response?.data?.error || err.message || 'Failed to load sections';
+      toast.error(message);
     }
   };
 
@@ -74,9 +79,11 @@ export default function QuestionsPage() {
       setText('');
       setOrder('');
       setQuestions((prev) => [...prev, res.data.question]);
-    } catch (error: any) {
-      console.error('Failed to create question', error);
-      toast.error(error.response?.data?.error || 'Failed to create question');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      console.error('Failed to create question', err);
+      const message = err.response?.data?.error || err.message || 'Failed to create question';
+      toast.error(message);
     } finally {
       setCreating(false);
     }
