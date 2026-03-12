@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { authAPI } from '@/lib/apiClient';
+import type { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 const navigation = [
@@ -54,8 +56,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       await authAPI.logout();
       toast.success('Logged out successfully');
       router.push('/admin/login');
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Logout failed');
+    } catch (error) {
+      const err = error as AxiosError<{ error?: string }>;
+      const message = err.response?.data?.error || err.message || 'Logout failed';
+      toast.error(message);
     }
   };
 
@@ -80,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center justify-between h-20 px-6 border-b border-white/10 bg-white/5 backdrop-blur-md shadow-sm">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)] p-1">
-                <img src="/ohdlogo.png" alt="OHD Logo" className="w-full h-full object-contain" />
+                <Image src="/ohdlogo.png" alt="OHD Logo" width={48} height={48} className="w-full h-full object-contain" />
               </div>
               <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-primary-200 tracking-tight drop-shadow-sm">OHD Admin</h1>
             </div>
