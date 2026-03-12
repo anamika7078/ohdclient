@@ -179,12 +179,12 @@ export default function AdminDashboard() {
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all ${overallStats && overallStats.overallPercentage >= 80
-                      ? 'bg-emerald-500'
-                      : overallStats && overallStats.overallPercentage >= 60
-                        ? 'bg-blue-500'
-                        : overallStats && overallStats.overallPercentage >= 40
-                          ? 'bg-yellow-500'
-                          : 'bg-red-500'
+                    ? 'bg-emerald-500'
+                    : overallStats && overallStats.overallPercentage >= 60
+                      ? 'bg-blue-500'
+                      : overallStats && overallStats.overallPercentage >= 40
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
                     }`}
                   style={{
                     width: overallStats && typeof overallStats.overallPercentage === 'number'
@@ -319,7 +319,9 @@ export default function AdminDashboard() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" domain={[0, 100]} />
                 <YAxis dataKey="name" type="category" width={150} />
-                <Tooltip />
+                <Tooltip
+                  formatter={(value: number | string | undefined, name) => [`${value ?? 0}%`, name]}
+                />
                 <Legend />
                 <Bar dataKey="percentage" fill="#8b5cf6" name="Performance %" />
               </BarChart>
